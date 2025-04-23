@@ -2,10 +2,13 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 // Signup User
+
 const signupUser = async (req, res) => {
-  const { username, email, phone, password, city, language } = req.body;
 
   try {
+      console.log('🔥 SIGNUP RECEIVED BODY:', req.body);
+
+    const { username, email, phone, password, city } = req.body;
     // Check if user already exists
     const userExists = await User.findOne({ $or: [{ email }, { phone }] });
     if (userExists) {
@@ -19,7 +22,6 @@ const signupUser = async (req, res) => {
       phone,
       password,  // Storing plain text password (not recommended)
       city,
-      language,
     });
 
     await newUser.save();

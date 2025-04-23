@@ -29,7 +29,7 @@ const LanguageScreen = ({ navigation }) => {
           style={styles.button}
           onPress={() => navigation.navigate('CityScreen', { language: 'am' })}
         >
-          <Text style={styles.buttonText}>Amharic</Text>
+          <Text style={styles.buttonText}>አማርኛ</Text>
         </TouchableOpacity>
       </View>
 

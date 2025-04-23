@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';
 
 const SignUpScreen = ({ route, navigation }) => {
-  const { language = 'en', city = '' } = route.params || {};
+  const [city, setCity] = useState('');
+  const [language, setLanguage] = useState('en');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (route.params) {
+      setCity(route.params.city || '');
+      setLanguage(route.params.language || 'en');
+    }
+  }, [route.params]);
+
   const texts = {
     en: {
       header: "National Exam Preparation Platform",
@@ -21,7 +30,7 @@ const SignUpScreen = ({ route, navigation }) => {
       error: "Signup failed. Please try again.",
     },
     am: {
-      header: "ብሔራዊ የመርመሪያ ፍላጎት መድረክ",
+      header: "ብሔራዊ ፈተና መዘጋጃ ፕለት ፎርም",
       username: "የተጠቃሚ ስም",
       email: "ኢሜል",
       phone: "የስልክ ቁጥር",
@@ -35,41 +44,40 @@ const SignUpScreen = ({ route, navigation }) => {
   const lang = texts[language];
 
   const handlePhoneNumberChange = (text) => {
-    if (/^\d{0,9}$/.test(text)) {
+    if (/^\d{0,10}$/.test(text)) {
       setPhoneNumber(text);
     }
   };
 
- const handleSignUp = async () => {
-  try {
-    const response = await axios.post(`http://192.168.137.149:5000/api/auth/signup`, {
-      username,
-      email,
-      phoneNumber,
-      password,
-    });
- console.log("SignUp Success:", response.data);
-    if (response.status === 201) {
-      Alert.alert(lang.success);
-      navigation.navigate('BasicInfoScreen', { language });
-       navigation.navigate('BasicInfoScreen', { user: response.data.user });
-    } else {
-      Alert.alert(lang.error);
-    }
-  } catch (error) {
-    if (error.response) {
-      console.error('Response Error:', error.response.data);
-      Alert.alert(`${lang.error} ${error.response.data.message}`);
-    } else if (error.request) {
-      console.error('Request Error:', error.request);
-      Alert.alert(`${lang.error} No response from server.`);
-    } else {
-      console.error('Error:', error.message);
-      Alert.alert(`${lang.error} ${error.message}`);
-    }
-  }
-};
+  const handleSignUp = async () => {
+    try {
+      const response = await axios.post('http://192.168.137.149:5000/signup', {
+        username,
+        email,
+        phone: phoneNumber,
+        password,
+        city,
+      });
 
+      if (response.status === 201) {
+        Alert.alert(lang.success);
+        navigation.navigate('BasicInfoScreen', { language, user: response.data.user });
+      } else {
+        Alert.alert(lang.error);
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Response Error:', error.response.data);
+        Alert.alert(`${lang.error} ${error.response.data.message}`);
+      } else if (error.request) {
+        console.error('Request Error:', error.request);
+        Alert.alert(`${lang.error} No response from server.`);
+      } else {
+        console.error('Error:', error.message);
+        Alert.alert(`${lang.error} ${error.message}`);
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>

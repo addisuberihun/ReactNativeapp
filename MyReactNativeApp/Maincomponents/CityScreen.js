@@ -13,7 +13,7 @@ const CityScreen = ({ navigation, route }) => {
       button: "Continue",
     },
     am: {
-      question: "የምትኖሩበት ከተማ/መንደር ማንዴ ናት?",
+      question: "የምትኖሩበት ከተማ/ክፍለ ሀገር?",
       placeholder: "ከተማ",
       button: "ቀጥል",
     },
