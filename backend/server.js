@@ -1,18 +1,26 @@
 const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/db');
-const authRoutes = require('./routes/auth');
 const dotenv = require('dotenv');
-dotenv.config();
+const connectDB = require('./config/db');
+const cors = require('cors');
+const authRoutes = require('./routes/authRoutes');
 
+dotenv.config(); // Load environment variables from .env file
+
+// Initialize Express app
 const app = express();
+
+// Connect to MongoDB
 connectDB();
 
-app.use(cors());
-app.use(express.json());
+// Middleware
+app.use(express.json()); // For parsing application/json
+app.use(cors()); // Enable CORS for all routes
 
-app.use('/', authRoutes);
+// Routes
+app.use('/api/auth', authRoutes); // Authentication routes (signup, login)
 
+// Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
